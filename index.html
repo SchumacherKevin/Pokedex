@@ -1,12 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/pokeball.png" type="image/x-icon">
     <title>Pokedex</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/pokemontypes.css">
+
+    <script src="scripts/template.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
+
 <body>
-    
+
+    <header class="header">
+        <div class="container header-content">
+            <img src="assets/pokeball.png" alt="Pokeball">
+            <h1 class="logo">Pokedex</h1>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search Pokémon..." aria-label="Search Pokémon">
+                <button id="searchBtn">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Spinner -->
+        <div id="spinner" class="spinner hidden"></div>
+
+        <!-- Pokémon Cards -->
+        <div id="pokemonContainer" class="card-grid"></div>
+
+        <!-- Pagination -->
+        <div class="load-more-container">
+            <button id="prevBtn" style="display:none;">Previous</button>
+            <button id="loadMoreBtn">Load more</button>
+        </div>
+    </main>
+
+    <!-- Detail Dialog -->
+    <dialog id="detailDialog" class="dialog">
+        <div id="detailContent"></div>
+
+        <div class="dialog-nav">
+            <button onclick="showPreviousPokemonInDialog()">⬅</button>
+            <button onclick="showNextPokemonInDialog()">➡</button>
+        </div>
+
+        <button onclick="closePokemonDetailDialog()">Close</button>
+    </dialog>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>© Kevin Schumacher</p>
+        </div>
+    </footer>
+
 </body>
+
 </html>
