@@ -1,8 +1,6 @@
-// =========================
 // HTML GENERATION FUNCTIONS
-// =========================
 function generatePokemonCardHTML(pokemon) {
-  const typesHTML = pokemon.types
+  let typesHTML = pokemon.types
     .map(
       (typeEntry) =>
         `<span class="type-badge ${typeEntry.type.name}">
@@ -23,11 +21,9 @@ function generatePokemonCardHTML(pokemon) {
   `;
 }
 
-// =========================
 // DETAIL VIEW
-// =========================
 function generatePokemonDetailHTML(pokemon, evolutionHTML) {
-  const typesHTML = pokemon.types
+  let typesHTML = pokemon.types
     .map(
       (typeEntry) =>
         `<span class="type-badge ${typeEntry.type.name}">
@@ -59,9 +55,7 @@ function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   `;
 }
 
-// =========================
 // STATS (FIXED + IMPROVED)
-// =========================
 function generateStatsHTML(pokemon) {
   return pokemon.stats
     .map((statEntry) => {
@@ -83,9 +77,7 @@ function generateStatsHTML(pokemon) {
     .join("");
 }
 
-// =========================
 // EVOLUTION
-// =========================
 function generateEvolutionItemHTML(pokemon) {
   return `
     <div class="evo-item">
@@ -95,9 +87,7 @@ function generateEvolutionItemHTML(pokemon) {
   `;
 }
 
-// =========================
 // HELPER
-// =========================
 function formatStatName(name) {
   const map = {
     hp: "HP",
@@ -111,9 +101,7 @@ function formatStatName(name) {
   return map[name] || name.toUpperCase();
 }
 
-// =========================
 // ANIMATE STATS (WICHTIG)
-// =========================
 function animateStats() {
   const bars = document.querySelectorAll(".stat-fill");
 

@@ -1,4 +1,5 @@
-// CONFIGURATION
+const URL_ALLPOKEMON =
+  "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=100000";
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon"; // API Basis-URL
 const POKEMON_PAGE_LIMIT = 20; // Anzahl Pokémon pro Seite
 
@@ -6,24 +7,95 @@ const POKEMON_PAGE_LIMIT = 20; // Anzahl Pokémon pro Seite
 let nextPageUrl = null; // URL für die nächste Pokémon-Seite
 let previousPageUrl = null; // URL für die vorherige Pokémon-Seite
 
+let allPokemons = [];
 let cachedPokemonsList = []; // Cache für bereits geladene Pokémon-Daten
 let currentlyDisplayedPokemons = []; // Pokémon, die aktuell im Grid angezeigt werden
 let currentlySelectedPokemonIndex = 0; // Index des aktuell ausgewählten Pokémon im Detaildialog
 
 // DOM ELEMENT REFERENCES
-const pokemonGridContainer = document.getElementById("pokemonContainer"); // Grid für Pokémon-Karten
-const loadingSpinnerElement = document.getElementById("spinner"); // Spinner-Element
-const loadMorePokemonsButton = document.getElementById("loadMoreBtn"); // "Load More"-Button
-const previousPageButton = document.getElementById("prevBtn"); // "Previous Page"-Button
-const pokemonDetailDialog = document.getElementById("detailDialog"); // Dialog für Pokémon-Details
-const pokemonDetailContent = document.getElementById("detailContent"); // Inhalt des Detaildialogs
+let pokemonGridContainer = document.getElementById("pokemonContainer"); // Grid für Pokémon-Karten
+let loadingSpinnerElement = document.getElementById("spinner"); // Spinner-Element
+let loadMorePokemonsButton = document.getElementById("loadMoreBtn"); // "Load More"-Button
+let previousPageButton = document.getElementById("prevBtn"); // "Previous Page"-Button
+let pokemonDetailDialog = document.getElementById("detailDialog"); // Dialog für Pokémon-Details
+let pokemonDetailContent = document.getElementById("detailContent"); // Inhalt des Detaildialogs
+let searchInputRef = document.getElementById("searchInput");
+let searchBtnRef = document.getElementById("searchBtn");
 
 // INITIALIZATION
 initializeApplication();
 
 // Startet die Anwendung und lädt die erste Pokémon-Seite
 async function initializeApplication() {
+  await setAllPokemons();
   await loadPokemonPage();
+}
+
+async function setAllPokemons() {
+  try {
+    let listOfAllPokemon = await fetch(URL_ALLPOKEMON);
+    let listOfAllPokemonAsJSON = await listOfAllPokemon.json();
+    allPokemons = listOfAllPokemonAsJSON.results;
+  } catch (loadingError) {
+    console.error("Fehler beim Laden der Seite:");
+  }
+}
+
+async function searchPokemon(searchString) {
+  let searchedResult = [];
+  for (let i = 0; i < allPokemons.length; i++) {
+    if (allPokemons[i].name.includes(searchString.toLowerCase())) {
+      let pokemon = await getPokemonByName(allPokemons[i].name);
+      searchedResult.push(pokemon.id);
+    }
+  }
+  return searchedResult;
+}
+
+async function initSearchPokemon() {
+  let query = searchInputRef.value.trim();
+
+  // Leere Suche → normale Listenansicht wiederherstellen
+  if (query.length === 0) {
+    await loadPokemonPage();
+    return;
+  }
+
+  // Mindestens 3 Zeichen
+  if (query.length < 3) return;
+
+  try {
+    showLoadingSpinner(true);
+    pokemonGridContainer.innerHTML = "";
+
+    // Namen filtern (aus allPokemons)
+    let matchingNames = allPokemons
+      .filter((p) => p.name.includes(query.toLowerCase()))
+      .map((p) => p.name);
+
+    if (matchingNames.length === 0) {
+      pokemonGridContainer.innerHTML =
+        '<p class="txtNoResult">No Pokemon found!</p>';
+      return;
+    }
+
+    // Detaildaten laden (parallel, mit bestehendem Cache)
+    let pokemonDataList = await Promise.all(
+      matchingNames.map((name) => fetchPokemonData(name)),
+    );
+
+    // Gültige Ergebnisse filtern und rendern
+    currentlyDisplayedPokemons = pokemonDataList.filter(Boolean);
+    currentlySelectedPokemonIndex = 0;
+
+    currentlyDisplayedPokemons.forEach((pokemonData) => {
+      renderPokemonCard(pokemonData);
+    });
+  } catch (searchError) {
+    console.error("Fehler bei der Suche:", searchError);
+  } finally {
+    showLoadingSpinner(false);
+  }
 }
 
 // POKEMON LIST LOADING
@@ -32,12 +104,12 @@ async function loadPokemonPage(pageUrl) {
     showLoadingSpinner(true);
 
     // API-Aufruf für Pokémon-Liste
-    const apiResponse = await fetch(
+    let apiResponse = await fetch(
       pageUrl || `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}`,
     );
     if (!apiResponse.ok) throw new Error("Fehler beim Laden der Pokémon-Liste");
 
-    const pokemonListData = await apiResponse.json();
+    let pokemonListData = await apiResponse.json();
 
     // Speichern der Pagination-URLs
     nextPageUrl = pokemonListData.next;
@@ -47,7 +119,7 @@ async function loadPokemonPage(pageUrl) {
     pokemonGridContainer.innerHTML = "";
 
     // Pokémon-Daten laden (parallel)
-    const pokemonDataPromises = pokemonListData.results.map((pokemonEntry) =>
+    let pokemonDataPromises = pokemonListData.results.map((pokemonEntry) =>
       fetchPokemonData(pokemonEntry.url),
     );
     currentlyDisplayedPokemons = await Promise.all(pokemonDataPromises);
@@ -70,15 +142,15 @@ async function loadPokemonPage(pageUrl) {
 
 // FETCH INDIVIDUAL POKEMON DATA
 async function fetchPokemonData(pokemonIdentifier) {
-  const isFullUrl =
+  let isFullUrl =
     typeof pokemonIdentifier === "string" &&
     pokemonIdentifier.startsWith("http");
 
   // Prüfen, ob Pokémon bereits im Cache ist
-  const pokemonIdFromUrl = isFullUrl
+  let pokemonIdFromUrl = isFullUrl
     ? extractPokemonIdFromUrl(pokemonIdentifier)
     : null;
-  const cachedPokemonData = cachedPokemonsList.find((cachedPokemon) =>
+  let cachedPokemonData = cachedPokemonsList.find((cachedPokemon) =>
     isFullUrl
       ? cachedPokemon.url === pokemonIdentifier ||
         cachedPokemon.id === pokemonIdFromUrl
@@ -90,16 +162,16 @@ async function fetchPokemonData(pokemonIdentifier) {
   if (cachedPokemonData) return cachedPokemonData;
 
   // API-URL bestimmen
-  const apiUrl = isFullUrl
+  let apiUrl = isFullUrl
     ? pokemonIdentifier
     : `${POKEAPI_BASE_URL}/${pokemonIdentifier.toString().toLowerCase()}`;
 
   try {
-    const apiResponse = await fetch(apiUrl);
+    let apiResponse = await fetch(apiUrl);
     if (!apiResponse.ok)
       throw new Error(`Pokémon nicht gefunden: ${pokemonIdentifier}`);
 
-    const pokemonData = await apiResponse.json();
+    let pokemonData = await apiResponse.json();
     pokemonData.url = apiUrl; // URL im Datenobjekt speichern
 
     cachedPokemonsList.push(pokemonData); // Cache aktualisieren
@@ -112,7 +184,7 @@ async function fetchPokemonData(pokemonIdentifier) {
 
 // Hilfsfunktion: Extrahiert die Pokémon-ID aus einer URL
 function extractPokemonIdFromUrl(pokemonUrl) {
-  const matchResult = pokemonUrl.match(/\/pokemon\/(\d+)\/?$/);
+  let matchResult = pokemonUrl.match(/\/pokemon\/(\d+)\/?$/);
   return matchResult ? parseInt(matchResult[1], 10) : null;
 }
 
@@ -120,8 +192,8 @@ function extractPokemonIdFromUrl(pokemonUrl) {
 function renderPokemonCard(pokemonData) {
   if (!pokemonData) return;
 
-  const pokemonCardElement = document.createElement("div");
-  const primaryPokemonType = pokemonData.types[0].type.name;
+  let pokemonCardElement = document.createElement("div");
+  let primaryPokemonType = pokemonData.types[0].type.name;
 
   pokemonCardElement.className = `card ${primaryPokemonType}`;
   pokemonCardElement.innerHTML = generatePokemonCardHTML(pokemonData);
@@ -157,17 +229,17 @@ async function renderPokemonDetail(pokemonData) {
 
   try {
     // Species-Daten abrufen
-    const speciesResponse = await fetch(pokemonData.species.url);
+    let speciesResponse = await fetch(pokemonData.species.url);
     if (!speciesResponse.ok)
       throw new Error("Fehler beim Laden der Pokémon-Spezies");
-    const speciesData = await speciesResponse.json();
+    let speciesData = await speciesResponse.json();
 
     // Evolution-Kette abrufen
     if (speciesData.evolution_chain) {
-      const evolutionResponse = await fetch(speciesData.evolution_chain.url);
+      let evolutionResponse = await fetch(speciesData.evolution_chain.url);
       if (!evolutionResponse.ok)
         throw new Error("Fehler beim Laden der Evolution-Kette");
-      const evolutionData = await evolutionResponse.json();
+      let evolutionData = await evolutionResponse.json();
 
       evolutionChainHTML = await renderPokemonEvolutionChain(
         evolutionData.chain,
@@ -199,7 +271,7 @@ async function renderPokemonEvolutionChain(evolutionChainNode) {
     let evolutionHTML = generateEvolutionItemHTML(evolutionPokemonData);
 
     if (evolutionChainNode.evolves_to.length > 0) {
-      const evolutionChildrenHTML = await Promise.all(
+      let evolutionChildrenHTML = await Promise.all(
         evolutionChainNode.evolves_to.map((childNode) =>
           renderPokemonEvolutionChain(childNode),
         ),
