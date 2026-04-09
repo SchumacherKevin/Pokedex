@@ -1,341 +1,181 @@
-const URL_ALLPOKEMON =
+import { fetchAllPokemons, fetchPokemonData } from "./scripts/api.js";
+import { initSearchPokemon } from "./scripts/search.js";
+import {
+  toggleLoading,
+  clearGrid,
+  togglePreviousButton,
+  toggleLoadMoreButton,
+  renderPokemonList,
+  openPokemonDetailDialog,
+  renderPokemonDetail,
+} from "./scripts/ui.js";
+
+const URL_ALL_POKEMON =
   "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=100000";
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const POKEMON_PAGE_LIMIT = 20;
 
-let nextPageUrl = null;
-let previousPageUrl = null;
-
 let allPokemons = [];
-let cachedPokemonsList = [];
 let currentlyDisplayedPokemons = [];
 let currentlySelectedPokemonIndex = 0;
+let nextPageUrl = null;
+let previousPageUrl = null;
+let lastPageUrl = null;
 
-let pokemonGridContainer = document.getElementById("pokemonContainer");
-let loadingSpinnerElement = document.getElementById("spinner");
-let loadMorePokemonsButton = document.getElementById("loadMoreBtn");
-let previousPageButton = document.getElementById("prevBtn");
-let pokemonDetailDialog = document.getElementById("detailDialog");
-let pokemonDetailContent = document.getElementById("detailContent");
-let searchInputRef = document.getElementById("searchInput");
-let searchBtnRef = document.getElementById("searchBtn");
+const loadMoreButton = document.getElementById("loadMoreBtn");
+const prevPageButton = document.getElementById("prevBtn");
+const backButton = document.getElementById("backBtn");
+const detailDialog = document.getElementById("detailDialog");
+const searchInputRef = document.getElementById("searchInput");
+const searchButtonRef = document.getElementById("searchBtn");
+const prevDialogBtn = document.getElementById("prevDialogBtn");
+const nextDialogBtn = document.getElementById("nextDialogBtn");
+const closeDialogBtn = document.getElementById("closeDialogBtn");
 
+setupEventListeners();
 initializeApplication();
 
+function setupEventListeners() {
+  searchButtonRef.addEventListener("click", handleSearch);
+  searchInputRef.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleSearch();
+  });
+
+  loadMoreButton.addEventListener("click", () => {
+    if (nextPageUrl) loadPokemonPage(nextPageUrl);
+  });
+
+  prevPageButton.addEventListener("click", () => {
+    if (previousPageUrl) loadPokemonPage(previousPageUrl);
+  });
+
+  backButton.addEventListener("click", handleBack);
+
+  nextDialogBtn.addEventListener("click", showNextPokemon);
+  prevDialogBtn.addEventListener("click", showPreviousPokemon);
+  closeDialogBtn.addEventListener("click", () => detailDialog.close());
+
+  detailDialog.addEventListener("click", (e) => {
+    if (e.target === detailDialog) detailDialog.close();
+  });
+}
+
 async function initializeApplication() {
-  await setAllPokemons();
+  allPokemons = await fetchAllPokemons(URL_ALL_POKEMON);
   await loadPokemonPage();
 }
 
-async function setAllPokemons() {
-  try {
-    let listOfAllPokemon = await fetch(URL_ALLPOKEMON);
-    let listOfAllPokemonAsJSON = await listOfAllPokemon.json();
-    allPokemons = listOfAllPokemonAsJSON.results;
-  } catch (loadingError) {
-    console.error("Fehler beim Laden der Seite:");
-  }
-}
+async function handleSearch() {
+  const query = searchInputRef.value.trim().toLowerCase();
 
-async function searchPokemon(searchString) {
-  let searchedResult = [];
-  for (let i = 0; i < allPokemons.length; i++) {
-    if (allPokemons[i].name.includes(searchString.toLowerCase())) {
-      let pokemon = await getPokemonByName(allPokemons[i].name);
-      searchedResult.push(pokemon.id);
-    }
-  }
-  return searchedResult;
-}
-
-async function initSearchPokemon() {
-  let query = searchInputRef.value.trim();
-
-  if (query.length === 0) {
-    await loadPokemonPage();
+  if (!query) {
+    await handleBack();
     return;
   }
 
-  if (query.length < 3) return;
+  lastPageUrl = previousPageUrl
+    ? `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}&offset=${getOffsetFromUrl(previousPageUrl) + POKEMON_PAGE_LIMIT}`
+    : nextPageUrl
+      ? `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}&offset=${Math.max(0, getOffsetFromUrl(nextPageUrl) - POKEMON_PAGE_LIMIT)}`
+      : null;
 
-  try {
-    showLoadingSpinner(true);
-    pokemonGridContainer.innerHTML = "";
+  nextPageUrl = null;
+  previousPageUrl = null;
+  togglePreviousButton(null);
+  toggleLoadMoreButton(false);
+  toggleBackButton(true);
 
-    let matchingNames = allPokemons
-      .filter((p) => p.name.includes(query.toLowerCase()))
-      .map((p) => p.name);
+  await initSearchPokemon(
+    query,
+    allPokemons,
+    currentlyDisplayedPokemons,
+    (index) => {
+      currentlySelectedPokemonIndex = index;
+    },
+    handleOpenDetail,
+  );
+}
 
-    if (matchingNames.length === 0) {
-      pokemonGridContainer.innerHTML =
-        '<p class="txtNoResult">No Pokemon found!</p>';
-      return;
-    }
+async function handleBack() {
+  searchInputRef.value = "";
+  toggleBackButton(false);
+  await loadPokemonPage(lastPageUrl);
+}
 
-    let pokemonDataList = await Promise.all(
-      matchingNames.map((name) => fetchPokemonData(name)),
-    );
-
-    currentlyDisplayedPokemons = pokemonDataList.filter(Boolean);
-    currentlySelectedPokemonIndex = 0;
-
-    currentlyDisplayedPokemons.forEach((pokemonData) => {
-      renderPokemonCard(pokemonData);
-    });
-  } catch (searchError) {
-    console.error("Fehler bei der Suche:", searchError);
-  } finally {
-    showLoadingSpinner(false);
-  }
+function getOffsetFromUrl(url) {
+  if (!url) return 0;
+  const match = url.match(/offset=(\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
 }
 
 async function loadPokemonPage(pageUrl) {
+  toggleLoading(true);
   try {
-    showLoadingSpinner(true);
-
-    let apiResponse = await fetch(
+    const response = await fetch(
       pageUrl || `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}`,
     );
-    if (!apiResponse.ok) throw new Error("Fehler beim Laden der Pokémon-Liste");
+    if (!response.ok) throw new Error("Error loading Pokémon page");
+    const data = await response.json();
 
-    let pokemonListData = await apiResponse.json();
+    nextPageUrl = data.next;
+    previousPageUrl = data.previous;
 
-    nextPageUrl = pokemonListData.next;
-    previousPageUrl = pokemonListData.previous;
+    clearGrid();
+    togglePreviousButton(previousPageUrl);
+    toggleLoadMoreButton(true);
 
-    pokemonGridContainer.innerHTML = "";
-
-    let pokemonDataPromises = pokemonListData.results.map((pokemonEntry) =>
-      fetchPokemonData(pokemonEntry.url),
+    const pokemonList = await Promise.all(
+      data.results.map((p) => fetchPokemonData(p.url)),
     );
-    currentlyDisplayedPokemons = await Promise.all(pokemonDataPromises);
+    currentlyDisplayedPokemons = pokemonList.filter(Boolean);
+    currentlySelectedPokemonIndex = 0;
 
-    currentlyDisplayedPokemons.forEach((pokemonData) => {
-      if (pokemonData) renderPokemonCard(pokemonData);
-    });
-
-    previousPageButton.style.display = previousPageUrl
-      ? "inline-block"
-      : "none";
-  } catch (loadingError) {
-    console.error("Fehler beim Laden der Seite:", loadingError);
+    renderPokemonList(currentlyDisplayedPokemons, handleOpenDetail);
+  } catch (error) {
+    console.error("Error loading Pokémon page:", error);
   } finally {
-    showLoadingSpinner(false);
+    toggleLoading(false);
   }
 }
 
-async function fetchPokemonData(pokemonIdentifier) {
-  let isFullUrl =
-    typeof pokemonIdentifier === "string" &&
-    pokemonIdentifier.startsWith("http");
+function toggleBackButton(visible) {
+  backButton.style.display = visible ? "inline-block" : "none";
+}
 
-  let pokemonIdFromUrl = isFullUrl
-    ? extractPokemonIdFromUrl(pokemonIdentifier)
-    : null;
-
-  let cachedPokemonData = cachedPokemonsList.find((cachedPokemon) =>
-    isFullUrl
-      ? cachedPokemon.url === pokemonIdentifier ||
-        cachedPokemon.id === pokemonIdFromUrl
-      : cachedPokemon.name.toLowerCase() ===
-          String(pokemonIdentifier).toLowerCase() ||
-        String(cachedPokemon.id) === String(pokemonIdentifier),
+async function handleOpenDetail(pokemonData) {
+  await openPokemonDetailDialog(
+    pokemonData,
+    currentlyDisplayedPokemons,
+    (index) => {
+      currentlySelectedPokemonIndex = index;
+    },
   );
-
-  if (cachedPokemonData) return cachedPokemonData;
-
-  let apiUrl = isFullUrl
-    ? pokemonIdentifier
-    : `${POKEAPI_BASE_URL}/${pokemonIdentifier.toString().toLowerCase()}`;
-
-  try {
-    let apiResponse = await fetch(apiUrl);
-    if (!apiResponse.ok)
-      throw new Error(`Pokémon nicht gefunden: ${pokemonIdentifier}`);
-
-    let pokemonData = await apiResponse.json();
-    pokemonData.url = apiUrl;
-
-    cachedPokemonsList.push(pokemonData);
-    return pokemonData;
-  } catch (fetchError) {
-    console.error("Fehler beim Abrufen des Pokémon:", fetchError);
-    return null;
-  }
 }
 
-function extractPokemonIdFromUrl(pokemonUrl) {
-  let matchResult = pokemonUrl.match(/\/pokemon\/(\d+)\/?$/);
-  return matchResult ? parseInt(matchResult[1], 10) : null;
-}
-
-function renderPokemonCard(pokemonData) {
-  if (!pokemonData) return;
-
-  let pokemonCardElement = document.createElement("div");
-  let primaryPokemonType = pokemonData.types[0].type.name;
-
-  pokemonCardElement.className = `card ${primaryPokemonType}`;
-  pokemonCardElement.innerHTML = generatePokemonCardHTML(pokemonData);
-
-  pokemonCardElement.onclick = () => openPokemonDetailDialog(pokemonData);
-
-  pokemonGridContainer.appendChild(pokemonCardElement);
-}
-
-async function openPokemonDetailDialog(pokemonData) {
-  try {
-    currentlySelectedPokemonIndex = currentlyDisplayedPokemons.findIndex(
-      (pokemon) => pokemon.name === pokemonData.name,
-    );
-
-    pokemonDetailContent.innerHTML = "<p>Lade Pokémon...</p>";
-
-    if (pokemonDetailDialog) pokemonDetailDialog.showModal();
-
-    await renderPokemonDetail(pokemonData);
-  } catch (dialogError) {
-    console.error("Fehler beim Öffnen des Dialogs:", dialogError);
-  }
-}
-
-async function renderPokemonDetail(pokemonData) {
-  let evolutionChainHTML = "Keine Evolutionsdaten verfügbar";
-
-  try {
-    let speciesResponse = await fetch(pokemonData.species.url);
-    if (!speciesResponse.ok)
-      throw new Error("Fehler beim Laden der Pokémon-Spezies");
-
-    let speciesData = await speciesResponse.json();
-
-    if (speciesData.evolution_chain) {
-      let evolutionResponse = await fetch(speciesData.evolution_chain.url);
-      if (!evolutionResponse.ok)
-        throw new Error("Fehler beim Laden der Evolution-Kette");
-
-      let evolutionData = await evolutionResponse.json();
-
-      evolutionChainHTML = await renderPokemonEvolutionChain(
-        evolutionData.chain,
-      );
-    }
-
-    pokemonDetailContent.innerHTML = generatePokemonDetailHTML(
-      pokemonData,
-      evolutionChainHTML,
-    );
-
-    animateStats();
-  } catch (detailError) {
-    console.error("Fehler beim Rendern der Pokémon-Details:", detailError);
-    pokemonDetailContent.innerHTML = `<p>Fehler beim Laden der Details</p>`;
-  }
-}
-
-async function renderPokemonEvolutionChain(evolutionChainNode) {
-  if (!evolutionChainNode) return "";
-
-  try {
-    const evolutionPokemonData = await fetchPokemonData(
-      evolutionChainNode.species.name,
-    );
-
-    let evolutionHTML = generateEvolutionItemHTML(evolutionPokemonData);
-
-    if (evolutionChainNode.evolves_to.length > 0) {
-      let evolutionChildrenHTML = await Promise.all(
-        evolutionChainNode.evolves_to.map((childNode) =>
-          renderPokemonEvolutionChain(childNode),
-        ),
-      );
-
-      evolutionHTML += evolutionChildrenHTML
-        .map((childHtml) => `<span class="evo-arrow">→</span>${childHtml}`)
-        .join("");
-    }
-
-    return evolutionHTML;
-  } catch (evolutionError) {
-    console.error("Fehler beim Rendern der Evolution:", evolutionError);
-    return "";
-  }
-}
-
-async function showNextPokemonInDialog() {
-  try {
-    if (currentlySelectedPokemonIndex < currentlyDisplayedPokemons.length - 1) {
-      currentlySelectedPokemonIndex++;
-      await renderPokemonDetail(
-        currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
-      );
-      return;
-    }
-
-    if (nextPageUrl) {
-      await loadPokemonPage(nextPageUrl);
-      currentlySelectedPokemonIndex = 0;
-      await renderPokemonDetail(
-        currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
-      );
-    }
-  } catch (navigationError) {
-    console.error(
-      "Fehler beim Anzeigen des nächsten Pokémon:",
-      navigationError,
-    );
-  }
-}
-
-async function showPreviousPokemonInDialog() {
-  try {
-    if (currentlySelectedPokemonIndex > 0) {
-      currentlySelectedPokemonIndex--;
-      await renderPokemonDetail(
-        currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
-      );
-      return;
-    }
-
-    if (previousPageUrl) {
-      await loadPokemonPage(previousPageUrl);
-      currentlySelectedPokemonIndex = currentlyDisplayedPokemons.length - 1;
-      await renderPokemonDetail(
-        currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
-      );
-    }
-  } catch (navigationError) {
-    console.error(
-      "Fehler beim Anzeigen des vorherigen Pokémon:",
-      navigationError,
-    );
-  }
-}
-
-loadMorePokemonsButton.onclick = async () => {
-  if (nextPageUrl) await loadPokemonPage(nextPageUrl);
-};
-
-previousPageButton.onclick = async () => {
-  if (previousPageUrl) await loadPokemonPage(previousPageUrl);
-};
-
-function showLoadingSpinner(shouldShow) {
-  if (!loadingSpinnerElement) return;
-
-  if (shouldShow) {
-    loadingSpinnerElement.classList.remove("hidden");
+async function showNextPokemon() {
+  if (currentlySelectedPokemonIndex < currentlyDisplayedPokemons.length - 1) {
+    currentlySelectedPokemonIndex++;
+  } else if (nextPageUrl) {
+    await loadPokemonPage(nextPageUrl);
+    currentlySelectedPokemonIndex = 0;
   } else {
-    loadingSpinnerElement.classList.add("hidden");
+    return;
   }
+  await renderPokemonDetail(
+    currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
+  );
 }
 
-function closePokemonDetailDialog() {
-  if (pokemonDetailDialog) pokemonDetailDialog.close();
-}
-
-if (pokemonDetailDialog) {
-  pokemonDetailDialog.addEventListener("click", (event) => {
-    if (event.target === pokemonDetailDialog) pokemonDetailDialog.close();
-  });
+async function showPreviousPokemon() {
+  if (currentlySelectedPokemonIndex > 0) {
+    currentlySelectedPokemonIndex--;
+  } else if (previousPageUrl) {
+    await loadPokemonPage(previousPageUrl);
+    currentlySelectedPokemonIndex = currentlyDisplayedPokemons.length - 1;
+  } else {
+    return;
+  }
+  await renderPokemonDetail(
+    currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
+  );
 }

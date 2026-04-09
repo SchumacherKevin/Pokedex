@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styles/pokemontypes.css">
 
-    <script src="scripts/template.js" defer></script>
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js"></script>
 </head>
 
 <body>
@@ -23,12 +22,13 @@
 
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Search Pokémon..." aria-label="Search Pokémon">
-                <button onclick="initSearchPokemon()" id="searchBtn">Search</button>
+                <button id="searchBtn">Search</button>
+                <button id="backBtn" style="display:none;">✕ Back</button>
             </div>
         </div>
     </header>
 
-    <main class="container">
+    <main class="container fullheight">
         <div id="spinner" class="spinner hidden"></div>
 
         <div id="pokemonContainer" class="card-grid"></div>
@@ -43,11 +43,11 @@
         <div id="detailContent"></div>
 
         <div class="dialog-nav">
-            <button onclick="showPreviousPokemonInDialog()">⬅</button>
-            <button onclick="showNextPokemonInDialog()">➡</button>
+            <button id="prevDialogBtn">⬅</button>
+            <button id="nextDialogBtn">➡</button>
         </div>
 
-        <button onclick="closePokemonDetailDialog()">Close</button>
+        <button id="closeDialogBtn">Close</button>
     </dialog>
 
     <footer class="footer">

@@ -1,4 +1,4 @@
-function generatePokemonCardHTML(pokemon) {
+export function generatePokemonCardHTML(pokemon) {
   const typesHTML = pokemon.types
     .map(
       (typeEntry) => `
@@ -12,7 +12,7 @@ function generatePokemonCardHTML(pokemon) {
   return `
     <div class="pokemon-card-header">
       <h3>
-        #${pokemon.id.toString().padStart(3, "0")} ${pokemon.name}
+        #${pokemon.id.toString().padStart(3, "0")} <br> ${pokemon.name}
       </h3>
       ${typesHTML}
     </div>
@@ -26,7 +26,7 @@ function generatePokemonCardHTML(pokemon) {
   `;
 }
 
-function generatePokemonDetailHTML(pokemon, evolutionHTML) {
+export function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   const typesHTML = pokemon.types
     .map(
       (typeEntry) => `
@@ -40,7 +40,7 @@ function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   return `
     <div class="pokemon-detail-header">
       <h2>
-        #${pokemon.id.toString().padStart(3, "0")} ${pokemon.name}
+        #${pokemon.id.toString().padStart(3, "0")} <br> ${pokemon.name}
       </h2>
       ${typesHTML}
     </div>
@@ -64,7 +64,7 @@ function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   `;
 }
 
-function generateStatsHTML(pokemon) {
+export function generateStatsHTML(pokemon) {
   return pokemon.stats
     .map((statEntry) => {
       const value = statEntry.base_stat;
@@ -72,7 +72,6 @@ function generateStatsHTML(pokemon) {
 
       return `
         <div class="stat-row">
-          
           <div class="stat-name">
             ${formatStatName(statEntry.stat.name)}
           </div>
@@ -88,14 +87,13 @@ function generateStatsHTML(pokemon) {
               data-width="${percent}%"
             ></div>
           </div>
-
         </div>
       `;
     })
     .join("");
 }
 
-function generateEvolutionItemHTML(pokemon) {
+export function generateEvolutionItemHTML(pokemon) {
   return `
     <div class="evo-item">
       <img 
@@ -107,7 +105,7 @@ function generateEvolutionItemHTML(pokemon) {
   `;
 }
 
-function formatStatName(name) {
+export function formatStatName(name) {
   const map = {
     hp: "HP",
     attack: "ATK",
@@ -116,16 +114,13 @@ function formatStatName(name) {
     "special-defense": "SP-DEF",
     speed: "SPD",
   };
-
   return map[name] || name.toUpperCase();
 }
 
-function animateStats() {
+export function animateStats() {
   const bars = document.querySelectorAll(".stat-fill");
-
   bars.forEach((bar) => {
     const width = bar.getAttribute("data-width");
-
     setTimeout(() => {
       bar.style.width = width;
     }, 100);

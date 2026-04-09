@@ -5,16 +5,19 @@ body {
     color: white;
 }
 
-/* Hidden elements */
 .hidden {
     display: none;
 }
 
 /* Container */
 .container {
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 16px;
+}
+
+.fullheight {
+    height: 100dvh;
 }
 
 /* Header & Footer */
@@ -131,6 +134,21 @@ button:hover {
     background: #c62828;
 }
 
+.load-more-container {
+    padding-top: 12px;
+}
+
+#backBtn {
+    background: #2b2b2b;
+    color: #ef5350;
+    border: 2px solid #ef5350;
+}
+
+#backBtn:hover {
+    background: #ef5350;
+    color: white;
+}
+
 /* Spinner */
 .spinner {
     width: 40px;
@@ -157,7 +175,6 @@ button:hover {
     padding: 20px;
     width: 380px;
     max-width: 90%;
-    /* max-height: 90vh; */
     box-sizing: border-box;
 }
 
@@ -186,14 +203,10 @@ dialog::backdrop {
     transition: width 0.6s ease;
 }
 
-/* Scrollable stats container ONLY */
 .stats-container {
     max-height: 250px;
-    /* Höhe des Scrollbereichs */
     overflow-y: auto;
-    /* nur hier Scrollen erlauben */
     padding-right: 8px;
-    /* Platz für Scrollbar */
 }
 
 /* Dialog Navigation */
