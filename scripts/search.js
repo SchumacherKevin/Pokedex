@@ -28,9 +28,7 @@ export async function initSearchPokemon(
       return;
     }
 
-    const fetchedPokemons = await Promise.all(
-      matchingNames.map(fetchPokemonData),
-    );
+    const fetchedPokemons = await Promise.all(matchingNames.map(fetchPokemonData));
 
     displayedPokemons.length = 0;
     displayedPokemons.push(...fetchedPokemons.filter(Boolean));

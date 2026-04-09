@@ -3,12 +3,10 @@ import {
   generatePokemonCardHTML,
   generatePokemonDetailHTML,
   generateEvolutionItemHTML,
-  animateStats,
 } from "./template.js";
 
 const pokemonGridContainer = document.getElementById("pokemonContainer");
 const loadingSpinnerElement = document.getElementById("spinner");
-const previousPageButton = document.getElementById("prevBtn");
 const pokemonDetailDialog = document.getElementById("detailDialog");
 const pokemonDetailContent = document.getElementById("detailContent");
 
@@ -21,12 +19,7 @@ export function clearGrid() {
 }
 
 export function showNoResults() {
-  pokemonGridContainer.innerHTML =
-    '<p class="txtNoResult">No Pokémon found!</p>';
-}
-
-export function togglePreviousButton(previousUrl) {
-  previousPageButton.style.display = previousUrl ? "inline-block" : "none";
+  pokemonGridContainer.innerHTML = '<p class="txtNoResult">No Pokémon found!</p>';
 }
 
 export function toggleLoadMoreButton(visible) {
@@ -51,16 +44,13 @@ export function renderPokemonCard(pokemonData, openDetailFn) {
   pokemonGridContainer.appendChild(cardElement);
 }
 
-export async function openPokemonDetailDialog(
-  pokemonData,
-  displayedPokemons,
-  updateIndexFn,
-) {
+export async function openPokemonDetailDialog(pokemonData, displayedPokemons, updateIndexFn) {
   const index = displayedPokemons.findIndex((p) => p.name === pokemonData.name);
   updateIndexFn(index);
 
   pokemonDetailContent.innerHTML = "<p>Loading Pokémon...</p>";
   pokemonDetailDialog?.showModal();
+  document.body.style.overflow = "hidden";
 
   await renderPokemonDetail(pokemonData);
 }
@@ -68,11 +58,7 @@ export async function openPokemonDetailDialog(
 export async function renderPokemonDetail(pokemonData) {
   try {
     const evolutionHTML = await getEvolutionChain(pokemonData);
-    pokemonDetailContent.innerHTML = generatePokemonDetailHTML(
-      pokemonData,
-      evolutionHTML,
-    );
-    animateStats();
+    pokemonDetailContent.innerHTML = generatePokemonDetailHTML(pokemonData, evolutionHTML);
   } catch (error) {
     pokemonDetailContent.innerHTML = "<p>Error loading Pokémon details</p>";
     console.error("Error rendering Pokémon detail:", error);
@@ -108,3 +94,23 @@ async function renderEvolutionChain(chainNode) {
 
   return html;
 }
+
+export function toggleAccordion(btn) {
+  btn.classList.toggle("open");
+  const body = btn.nextElementSibling;
+  body.classList.toggle("open");
+
+  if (body.classList.contains("open")) {
+    const bars = body.querySelectorAll(".stat-fill");
+    bars.forEach((bar) => {
+      bar.style.width = "0%";
+      setTimeout(() => { bar.style.width = bar.getAttribute("data-width"); }, 50);
+    });
+  }
+}
+
+window.toggleAccordion = toggleAccordion;
+
+pokemonDetailDialog?.addEventListener("close", () => {
+  document.body.style.overflow = "";
+});

@@ -1,65 +1,64 @@
 export function generatePokemonCardHTML(pokemon) {
   const typesHTML = pokemon.types
-    .map(
-      (typeEntry) => `
+    .map((typeEntry) => `
       <span class="type-badge ${typeEntry.type.name}">
         ${typeEntry.type.name}
       </span>
-    `,
-    )
+    `)
     .join(" ");
 
   return `
     <div class="pokemon-card-header">
-      <h3>
-        #${pokemon.id.toString().padStart(3, "0")} <br> ${pokemon.name}
-      </h3>
+      <h3>#${pokemon.id.toString().padStart(3, "0")} <br> ${pokemon.name}</h3>
       ${typesHTML}
     </div>
-
     <div class="pokemon-card-img">
-      <img 
-        src="${pokemon.sprites.front_default}" 
-        alt="${pokemon.name}"
-      >
+      <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
     </div>
   `;
 }
 
 export function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   const typesHTML = pokemon.types
-    .map(
-      (typeEntry) => `
+    .map((typeEntry) => `
       <span class="type-badge ${typeEntry.type.name}">
         ${typeEntry.type.name}
       </span>
-    `,
-    )
+    `)
     .join(" ");
 
   return `
     <div class="pokemon-detail-header">
-      <h2>
-        #${pokemon.id.toString().padStart(3, "0")} <br> ${pokemon.name}
-      </h2>
+      <h2>#${pokemon.id.toString().padStart(3, "0")} ${pokemon.name}</h2>
       ${typesHTML}
     </div>
 
     <div class="pokemon-detail-img">
-      <img 
-        src="${pokemon.sprites.other["official-artwork"].front_default}" 
-        alt="${pokemon.name}"
-      >
+      <img src="${pokemon.sprites.other["official-artwork"].front_default}" alt="${pokemon.name}">
     </div>
 
-    <h3>Stats</h3>
-    <div class="stats-container">
-      ${generateStatsHTML(pokemon)}
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion(this)">
+        <span>Stats</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <div class="stats-container">
+          ${generateStatsHTML(pokemon)}
+        </div>
+      </div>
     </div>
 
-    <h3>Evolution</h3>
-    <div class="evolution-chain">
-      ${evolutionHTML}
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAccordion(this)">
+        <span>Evolution</span>
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <div class="evolution-chain">
+          ${evolutionHTML}
+        </div>
+      </div>
     </div>
   `;
 }
@@ -72,20 +71,10 @@ export function generateStatsHTML(pokemon) {
 
       return `
         <div class="stat-row">
-          <div class="stat-name">
-            ${formatStatName(statEntry.stat.name)}
-          </div>
-
-          <div class="stat-value">
-            ${value}
-          </div>
-
+          <div class="stat-name">${formatStatName(statEntry.stat.name)}</div>
+          <div class="stat-value">${value}</div>
           <div class="stat-bar">
-            <div 
-              class="stat-fill" 
-              style="width: 0%" 
-              data-width="${percent}%"
-            ></div>
+            <div class="stat-fill" style="width: 0%" data-width="${percent}%"></div>
           </div>
         </div>
       `;
@@ -96,10 +85,7 @@ export function generateStatsHTML(pokemon) {
 export function generateEvolutionItemHTML(pokemon) {
   return `
     <div class="evo-item">
-      <img 
-        src="${pokemon.sprites.front_default}" 
-        alt="${pokemon.name}"
-      >
+      <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
       <p>${pokemon.name}</p>
     </div>
   `;
@@ -115,14 +101,4 @@ export function formatStatName(name) {
     speed: "SPD",
   };
   return map[name] || name.toUpperCase();
-}
-
-export function animateStats() {
-  const bars = document.querySelectorAll(".stat-fill");
-  bars.forEach((bar) => {
-    const width = bar.getAttribute("data-width");
-    setTimeout(() => {
-      bar.style.width = width;
-    }, 100);
-  });
 }

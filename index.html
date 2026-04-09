@@ -28,26 +28,24 @@
         </div>
     </header>
 
-    <main class="container fullheight">
+    <main class="container">
         <div id="spinner" class="spinner hidden"></div>
 
         <div id="pokemonContainer" class="card-grid"></div>
 
         <div class="load-more-container">
-            <button id="prevBtn" style="display:none;">Previous</button>
             <button id="loadMoreBtn">Load more</button>
         </div>
     </main>
 
     <dialog id="detailDialog" class="dialog">
+        <button id="closeDialogBtn" class="close-btn">✕</button>
         <div id="detailContent"></div>
 
         <div class="dialog-nav">
             <button id="prevDialogBtn">⬅</button>
             <button id="nextDialogBtn">➡</button>
         </div>
-
-        <button id="closeDialogBtn">Close</button>
     </dialog>
 
     <footer class="footer">
@@ -55,7 +53,6 @@
             <p>© Kevin Schumacher</p>
         </div>
     </footer>
-
 </body>
 
 </html>

@@ -9,8 +9,7 @@ export async function fetchAllPokemons(url) {
 }
 
 export async function fetchPokemonData(identifier) {
-  const isFullUrl =
-    typeof identifier === "string" && identifier.startsWith("http");
+  const isFullUrl = typeof identifier === "string" && identifier.startsWith("http");
 
   const cached = getCachedPokemon(identifier, isFullUrl);
   if (cached) return cached;

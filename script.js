@@ -3,15 +3,13 @@ import { initSearchPokemon } from "./scripts/search.js";
 import {
   toggleLoading,
   clearGrid,
-  togglePreviousButton,
   toggleLoadMoreButton,
   renderPokemonList,
   openPokemonDetailDialog,
   renderPokemonDetail,
 } from "./scripts/ui.js";
 
-const URL_ALL_POKEMON =
-  "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=100000";
+const URL_ALL_POKEMON = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=100000";
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const POKEMON_PAGE_LIMIT = 20;
 
@@ -19,11 +17,8 @@ let allPokemons = [];
 let currentlyDisplayedPokemons = [];
 let currentlySelectedPokemonIndex = 0;
 let nextPageUrl = null;
-let previousPageUrl = null;
-let lastPageUrl = null;
 
 const loadMoreButton = document.getElementById("loadMoreBtn");
-const prevPageButton = document.getElementById("prevBtn");
 const backButton = document.getElementById("backBtn");
 const detailDialog = document.getElementById("detailDialog");
 const searchInputRef = document.getElementById("searchInput");
@@ -42,17 +37,13 @@ function setupEventListeners() {
   });
 
   loadMoreButton.addEventListener("click", () => {
-    if (nextPageUrl) loadPokemonPage(nextPageUrl);
-  });
-
-  prevPageButton.addEventListener("click", () => {
-    if (previousPageUrl) loadPokemonPage(previousPageUrl);
+    if (nextPageUrl) loadMorePokemons(nextPageUrl);
   });
 
   backButton.addEventListener("click", handleBack);
 
-  nextDialogBtn.addEventListener("click", showNextPokemon);
   prevDialogBtn.addEventListener("click", showPreviousPokemon);
+  nextDialogBtn.addEventListener("click", showNextPokemon);
   closeDialogBtn.addEventListener("click", () => detailDialog.close());
 
   detailDialog.addEventListener("click", (e) => {
@@ -62,7 +53,7 @@ function setupEventListeners() {
 
 async function initializeApplication() {
   allPokemons = await fetchAllPokemons(URL_ALL_POKEMON);
-  await loadPokemonPage();
+  await loadMorePokemons();
 }
 
 async function handleSearch() {
@@ -73,15 +64,7 @@ async function handleSearch() {
     return;
   }
 
-  lastPageUrl = previousPageUrl
-    ? `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}&offset=${getOffsetFromUrl(previousPageUrl) + POKEMON_PAGE_LIMIT}`
-    : nextPageUrl
-      ? `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}&offset=${Math.max(0, getOffsetFromUrl(nextPageUrl) - POKEMON_PAGE_LIMIT)}`
-      : null;
-
   nextPageUrl = null;
-  previousPageUrl = null;
-  togglePreviousButton(null);
   toggleLoadMoreButton(false);
   toggleBackButton(true);
 
@@ -89,9 +72,7 @@ async function handleSearch() {
     query,
     allPokemons,
     currentlyDisplayedPokemons,
-    (index) => {
-      currentlySelectedPokemonIndex = index;
-    },
+    (index) => { currentlySelectedPokemonIndex = index; },
     handleOpenDetail,
   );
 }
@@ -99,38 +80,31 @@ async function handleSearch() {
 async function handleBack() {
   searchInputRef.value = "";
   toggleBackButton(false);
-  await loadPokemonPage(lastPageUrl);
+  currentlyDisplayedPokemons = [];
+  clearGrid();
+  nextPageUrl = null;
+  await loadMorePokemons();
 }
 
-function getOffsetFromUrl(url) {
-  if (!url) return 0;
-  const match = url.match(/offset=(\d+)/);
-  return match ? parseInt(match[1], 10) : 0;
-}
-
-async function loadPokemonPage(pageUrl) {
+async function loadMorePokemons(pageUrl) {
   toggleLoading(true);
   try {
     const response = await fetch(
       pageUrl || `${POKEAPI_BASE_URL}?limit=${POKEMON_PAGE_LIMIT}`,
     );
     if (!response.ok) throw new Error("Error loading Pokémon page");
+
     const data = await response.json();
-
     nextPageUrl = data.next;
-    previousPageUrl = data.previous;
-
-    clearGrid();
-    togglePreviousButton(previousPageUrl);
-    toggleLoadMoreButton(true);
+    toggleLoadMoreButton(!!nextPageUrl);
 
     const pokemonList = await Promise.all(
       data.results.map((p) => fetchPokemonData(p.url)),
     );
-    currentlyDisplayedPokemons = pokemonList.filter(Boolean);
-    currentlySelectedPokemonIndex = 0;
+    const newPokemons = pokemonList.filter(Boolean);
 
-    renderPokemonList(currentlyDisplayedPokemons, handleOpenDetail);
+    currentlyDisplayedPokemons = [...currentlyDisplayedPokemons, ...newPokemons];
+    renderPokemonList(newPokemons, handleOpenDetail);
   } catch (error) {
     console.error("Error loading Pokémon page:", error);
   } finally {
@@ -146,9 +120,7 @@ async function handleOpenDetail(pokemonData) {
   await openPokemonDetailDialog(
     pokemonData,
     currentlyDisplayedPokemons,
-    (index) => {
-      currentlySelectedPokemonIndex = index;
-    },
+    (index) => { currentlySelectedPokemonIndex = index; },
   );
 }
 
@@ -156,26 +128,19 @@ async function showNextPokemon() {
   if (currentlySelectedPokemonIndex < currentlyDisplayedPokemons.length - 1) {
     currentlySelectedPokemonIndex++;
   } else if (nextPageUrl) {
-    await loadPokemonPage(nextPageUrl);
-    currentlySelectedPokemonIndex = 0;
+    await loadMorePokemons(nextPageUrl);
+    currentlySelectedPokemonIndex = currentlyDisplayedPokemons.length - 1;
   } else {
     return;
   }
-  await renderPokemonDetail(
-    currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
-  );
+  await renderPokemonDetail(currentlyDisplayedPokemons[currentlySelectedPokemonIndex]);
 }
 
 async function showPreviousPokemon() {
   if (currentlySelectedPokemonIndex > 0) {
     currentlySelectedPokemonIndex--;
-  } else if (previousPageUrl) {
-    await loadPokemonPage(previousPageUrl);
-    currentlySelectedPokemonIndex = currentlyDisplayedPokemons.length - 1;
   } else {
     return;
   }
-  await renderPokemonDetail(
-    currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
-  );
+  await renderPokemonDetail(currentlyDisplayedPokemons[currentlySelectedPokemonIndex]);
 }
