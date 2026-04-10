@@ -21,9 +21,9 @@ export function generatePokemonCardHTML(pokemon) {
 export function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   const typesHTML = pokemon.types
     .map((typeEntry) => `
-      <span class="type-badge ${typeEntry.type.name}">
+      <div class="type-badge ${typeEntry.type.name}">
         ${typeEntry.type.name}
-      </span>
+      </div>
     `)
     .join(" ");
 

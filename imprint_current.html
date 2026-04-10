@@ -14,40 +14,18 @@
 </head>
 
 <body>
-
     <header class="header">
         <div class="container header-content">
             <a href="index.html"> <img src="assets/pokeball.png" alt="Pokeball"></a>
             <h1 class="logo">Pokedex</h1>
-
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search Pokémon..." aria-label="Search Pokémon">
-                <button id="searchBtn">Search</button>
-                <button id="backBtn" style="display:none;">✕ Back</button>
+            <div>
+                <a href="index.html">Start</a>
             </div>
         </div>
     </header>
+    <main>
 
-    <main class="container">
-        <div id="spinner" class="spinner hidden"></div>
-
-        <div id="pokemonContainer" class="card-flex"></div>
-
-        <div class="load-more-container">
-            <button id="loadMoreBtn">Load more</button>
-        </div>
     </main>
-
-    <dialog id="detailDialog" class="dialog">
-        <button id="closeDialogBtn" class="close-btn">✕</button>
-        <div id="detailContent"></div>
-
-        <div class="dialog-nav">
-            <button id="prevDialogBtn">⬅</button>
-            <button id="nextDialogBtn">➡</button>
-        </div>
-    </dialog>
-
     <footer class="footer">
         <div class="container footer-content">
             <p>© Kevin Schumacher</p>

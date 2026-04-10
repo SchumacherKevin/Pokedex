@@ -11,7 +11,13 @@ const pokemonDetailDialog = document.getElementById("detailDialog");
 const pokemonDetailContent = document.getElementById("detailContent");
 
 export function toggleLoading(show) {
-  loadingSpinnerElement?.classList.toggle("hidden", !show);
+  if (show) {
+    loadingSpinnerElement?.classList.remove("hidden");
+  } else {
+    setTimeout(() => {
+      loadingSpinnerElement?.classList.add("hidden");
+    }, 1000);
+  }
 }
 
 export function clearGrid() {
@@ -19,7 +25,8 @@ export function clearGrid() {
 }
 
 export function showNoResults() {
-  pokemonGridContainer.innerHTML = '<p class="txtNoResult">No Pokémon found!</p>';
+  pokemonGridContainer.innerHTML =
+    '<p class="txtNoResult">No Pokémon found!</p>';
 }
 
 export function toggleLoadMoreButton(visible) {
@@ -44,7 +51,11 @@ export function renderPokemonCard(pokemonData, openDetailFn) {
   pokemonGridContainer.appendChild(cardElement);
 }
 
-export async function openPokemonDetailDialog(pokemonData, displayedPokemons, updateIndexFn) {
+export async function openPokemonDetailDialog(
+  pokemonData,
+  displayedPokemons,
+  updateIndexFn,
+) {
   const index = displayedPokemons.findIndex((p) => p.name === pokemonData.name);
   updateIndexFn(index);
 
@@ -58,7 +69,10 @@ export async function openPokemonDetailDialog(pokemonData, displayedPokemons, up
 export async function renderPokemonDetail(pokemonData) {
   try {
     const evolutionHTML = await getEvolutionChain(pokemonData);
-    pokemonDetailContent.innerHTML = generatePokemonDetailHTML(pokemonData, evolutionHTML);
+    pokemonDetailContent.innerHTML = generatePokemonDetailHTML(
+      pokemonData,
+      evolutionHTML,
+    );
   } catch (error) {
     pokemonDetailContent.innerHTML = "<p>Error loading Pokémon details</p>";
     console.error("Error rendering Pokémon detail:", error);
@@ -104,7 +118,9 @@ export function toggleAccordion(btn) {
     const bars = body.querySelectorAll(".stat-fill");
     bars.forEach((bar) => {
       bar.style.width = "0%";
-      setTimeout(() => { bar.style.width = bar.getAttribute("data-width"); }, 50);
+      setTimeout(() => {
+        bar.style.width = bar.getAttribute("data-width");
+      }, 50);
     });
   }
 }

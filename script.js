@@ -9,7 +9,8 @@ import {
   renderPokemonDetail,
 } from "./scripts/ui.js";
 
-const URL_ALL_POKEMON = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=100000";
+const URL_ALL_POKEMON =
+  "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=100000";
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const POKEMON_PAGE_LIMIT = 20;
 
@@ -72,7 +73,9 @@ async function handleSearch() {
     query,
     allPokemons,
     currentlyDisplayedPokemons,
-    (index) => { currentlySelectedPokemonIndex = index; },
+    (index) => {
+      currentlySelectedPokemonIndex = index;
+    },
     handleOpenDetail,
   );
 }
@@ -103,7 +106,10 @@ async function loadMorePokemons(pageUrl) {
     );
     const newPokemons = pokemonList.filter(Boolean);
 
-    currentlyDisplayedPokemons = [...currentlyDisplayedPokemons, ...newPokemons];
+    currentlyDisplayedPokemons = [
+      ...currentlyDisplayedPokemons,
+      ...newPokemons,
+    ];
     renderPokemonList(newPokemons, handleOpenDetail);
   } catch (error) {
     console.error("Error loading Pokémon page:", error);
@@ -120,7 +126,9 @@ async function handleOpenDetail(pokemonData) {
   await openPokemonDetailDialog(
     pokemonData,
     currentlyDisplayedPokemons,
-    (index) => { currentlySelectedPokemonIndex = index; },
+    (index) => {
+      currentlySelectedPokemonIndex = index;
+    },
   );
 }
 
@@ -128,12 +136,15 @@ async function showNextPokemon() {
   if (currentlySelectedPokemonIndex < currentlyDisplayedPokemons.length - 1) {
     currentlySelectedPokemonIndex++;
   } else if (nextPageUrl) {
+    const previousLength = currentlyDisplayedPokemons.length;
     await loadMorePokemons(nextPageUrl);
-    currentlySelectedPokemonIndex = currentlyDisplayedPokemons.length - 1;
+    currentlySelectedPokemonIndex = previousLength;
   } else {
     return;
   }
-  await renderPokemonDetail(currentlyDisplayedPokemons[currentlySelectedPokemonIndex]);
+  await renderPokemonDetail(
+    currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
+  );
 }
 
 async function showPreviousPokemon() {
@@ -142,5 +153,7 @@ async function showPreviousPokemon() {
   } else {
     return;
   }
-  await renderPokemonDetail(currentlyDisplayedPokemons[currentlySelectedPokemonIndex]);
+  await renderPokemonDetail(
+    currentlyDisplayedPokemons[currentlySelectedPokemonIndex],
+  );
 }

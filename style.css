@@ -1,11 +1,14 @@
 /* Base */
 body {
+    display: flex;
+    flex-direction: column;
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     font-size: 16px;
     line-height: 1.5;
     background: #1b1b1b;
     color: white;
+    min-height: 100dvh;
 }
 
 .hidden {
@@ -35,6 +38,15 @@ h5 {
 
 h6 {
     font-size: 0.875rem;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    color: #8e0000;
 }
 
 /* Layout */
@@ -138,13 +150,17 @@ button:hover {
 }
 
 .load-more-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding-top: 12px;
 }
 
 /* Cards */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+.card-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 16px;
 }
 
@@ -158,6 +174,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: 200px;
 }
 
 .card:hover {
@@ -178,19 +195,33 @@ button:hover {
     display: inline-block;
     padding: 4px 10px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 16px;
     background: #ef5350;
 }
 
 /* Spinner */
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 5px solid #444;
-    border-top: 5px solid #ef5350;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(27, 27, 27, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner.hidden {
+    display: none;
+}
+
+.spinner::after {
+    content: "";
+    width: 64px;
+    height: 64px;
+    border: 7px solid #444;
+    border-top: 7px solid #ef5350;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 30px auto;
+    animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
@@ -212,10 +243,8 @@ button:hover {
 }
 
 .dialog[open] {
-    position: relative;
     width: 420px;
     max-width: 92vw;
-    height: 620px;
     max-height: 92vh;
     display: flex;
     flex-direction: column;
@@ -268,12 +297,8 @@ dialog::backdrop {
 
 /* Pokemon Detail */
 .pokemon-detail-header {
-    display: flex;
-    justify-content: center;
     align-items: center;
     text-align: center;
-    flex-direction: column;
-    gap: 8px;
 }
 
 .pokemon-detail-img {
@@ -297,8 +322,13 @@ dialog::backdrop {
     padding-right: 8px;
 }
 
+.stat-row {
+    display: flex;
+    gap: 4px;
+}
+
 .stat-bar {
-    width: 100%;
+    width: 60%;
     height: 16px;
     background: #333;
     border-radius: 12px;
