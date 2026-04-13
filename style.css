@@ -248,7 +248,6 @@ button:hover {
     max-height: 92vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 dialog::backdrop {
@@ -284,7 +283,6 @@ dialog::backdrop {
 
 #detailContent {
     flex: 1;
-    overflow-y: auto;
     padding-right: 4px;
 }
 
@@ -318,7 +316,6 @@ dialog::backdrop {
 /* Stats */
 .stats-container {
     max-height: 250px;
-    overflow-y: auto;
     padding-right: 8px;
 }
 
@@ -333,7 +330,6 @@ dialog::backdrop {
     background: #333;
     border-radius: 12px;
     margin: 8px 0;
-    overflow: hidden;
 }
 
 .stat-fill {
@@ -349,7 +345,6 @@ dialog::backdrop {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin-top: 16px;
     flex-wrap: wrap;
 }
 
@@ -409,7 +404,6 @@ dialog::backdrop {
 
 .accordion-body {
     max-height: 0;
-    overflow: hidden;
     transition: max-height 0.35s ease, padding 0.2s ease;
     padding: 0 16px;
     background: #161616;
