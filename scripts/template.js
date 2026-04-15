@@ -1,3 +1,9 @@
+// ============================================================
+// EXPORT: generatePokemonCardHTML – HTML für eine Pokémon-Karte erzeugen
+// ============================================================
+
+// Gibt den inneren HTML-String einer Pokémon-Karte zurück.
+// Typen werden als farbige Badges mit der passenden CSS-Klasse aus pokemontypes.css gerendert.
 export function generatePokemonCardHTML(pokemon) {
   const typesHTML = pokemon.types
     .map((typeEntry) => `
@@ -18,6 +24,14 @@ export function generatePokemonCardHTML(pokemon) {
   `;
 }
 
+// ============================================================
+// EXPORT: generatePokemonDetailHTML – HTML für den Detail-Dialog erzeugen
+// ============================================================
+
+// Baut den vollständigen Inhalt des Detail-Dialogs zusammen.
+// Enthält Header mit Typen, das hochauflösende Artwork sowie zwei Akkordeons
+// für Stats und die Evolutionskette. Das evolutionHTML-Fragment wird von
+// getEvolutionChain() (ui.js) asynchron vorbereitet und hier eingesetzt.
 export function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   const typesHTML = pokemon.types
     .map((typeEntry) => `
@@ -63,10 +77,18 @@ export function generatePokemonDetailHTML(pokemon, evolutionHTML) {
   `;
 }
 
+// ============================================================
+// EXPORT: generateStatsHTML – Balkendiagramm für alle Basiswerte
+// ============================================================
+
+// Erzeugt für jeden Stat eine Zeile mit Name, Zahlenwert und einem animierten
+// Fortschrittsbalken. Der tatsächliche Prozentwert wird als data-width-Attribut
+// gespeichert und erst beim Öffnen des Akkordeons per JS gesetzt (CSS-Animation).
 export function generateStatsHTML(pokemon) {
   return pokemon.stats
     .map((statEntry) => {
       const value = statEntry.base_stat;
+      // Maximalwert 255 (höchster möglicher Basiswert in den Pokémon-Spielen)
       const percent = Math.min((value / 255) * 100, 100);
 
       return `
@@ -74,6 +96,7 @@ export function generateStatsHTML(pokemon) {
           <div class="stat-name">${formatStatName(statEntry.stat.name)}</div>
           <div class="stat-value">${value}</div>
           <div class="stat-bar">
+            <!-- Balken startet bei 0%, wird per JS auf data-width animiert -->
             <div class="stat-fill" style="width: 0%" data-width="${percent}%"></div>
           </div>
         </div>
@@ -82,6 +105,12 @@ export function generateStatsHTML(pokemon) {
     .join("");
 }
 
+// ============================================================
+// EXPORT: generateEvolutionItemHTML – HTML für ein Evolutionselement
+// ============================================================
+
+// Erzeugt das HTML für ein einzelnes Pokémon innerhalb der Evolutionskette
+// (Sprite + Name). Die Verkettung mit Pfeilen übernimmt renderEvolutionChain() in ui.js.
 export function generateEvolutionItemHTML(pokemon) {
   return `
     <div class="evo-item">
@@ -91,6 +120,12 @@ export function generateEvolutionItemHTML(pokemon) {
   `;
 }
 
+// ============================================================
+// EXPORT: formatStatName – Interne Stat-Bezeichnung lesbar machen
+// ============================================================
+
+// Wandelt die API-Bezeichnungen (z. B. „special-attack") in kompakte
+// Kürzel für die Anzeige um (z. B. „SP-ATK").
 export function formatStatName(name) {
   const map = {
     hp: "HP",
