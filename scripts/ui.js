@@ -48,6 +48,14 @@ export function showNoResults() {
 }
 
 // ============================================================
+// EXPORT: showSearchError – Validierungshinweis für kurze Suchbegriffe
+// ============================================================
+export function showSearchError() {
+  pokemonGridContainer.innerHTML =
+    '<p class="txtNoResult">Please enter at least 3 characters.</p>';
+}
+
+// ============================================================
 // EXPORT: toggleLoadMoreButton – „Load more"-Button ein-/ausblenden
 // ============================================================
 export function toggleLoadMoreButton(visible) {

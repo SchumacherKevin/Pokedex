@@ -6,6 +6,7 @@ import { initSearchPokemon } from "./scripts/search.js";
 import {
   toggleLoading,
   clearGrid,
+  showSearchError,
   toggleLoadMoreButton,
   renderPokemonList,
   openPokemonDetailDialog,
@@ -108,6 +109,11 @@ async function handleSearch() {
   // Leere Suche → zurück zur normalen Ansicht
   if (!query) {
     await handleBack();
+    return;
+  }
+
+  if (query.length < 3) {
+    showSearchError();
     return;
   }
 
