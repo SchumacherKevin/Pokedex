@@ -1,59 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assets/pokeball.png" type="image/x-icon">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="assets/pokeball.png" type="image/x-icon" />
     <title>Pokedex</title>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="styles/pokemontypes.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles/pokemontypes.css" />
 
     <script type="module" src="script.js"></script>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <header class="header">
-        <div class="container header-content">
-            <a href="index.html"> <img src="assets/pokeball.png" alt="Pokeball"></a>
-            <h1 class="logo">Pokedex</h1>
+      <div class="container header-content">
+        <a href="index.html">
+          <img src="assets/pokeball.png" alt="Pokeball"
+        /></a>
+        <h1 class="logo">Pokedex</h1>
 
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search Pokémon..." aria-label="Search Pokémon">
-                <button id="searchBtn">Search</button>
-                <button id="backBtn" style="display:none;">✕ Back</button>
-            </div>
+        <div class="search-area">
+          <div class="search-container">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search Pokémon..."
+              aria-label="Search Pokémon"
+            />
+            <button id="searchBtn">Search</button>
+            <button id="backBtn" style="display: none">✕ Back</button>
+          </div>
+          <p id="searchError" class="search-error" aria-live="polite"></p>
         </div>
+      </div>
     </header>
 
     <main class="container">
-        <div id="spinner" class="spinner hidden"></div>
+      <div id="spinner" class="spinner hidden"></div>
 
-        <div id="pokemonContainer" class="card-flex"></div>
+      <div id="pokemonContainer" class="card-flex"></div>
 
-        <div class="load-more-container">
-            <button id="loadMoreBtn">Load more</button>
-        </div>
+      <div class="load-more-container">
+        <button id="loadMoreBtn">Load more</button>
+      </div>
     </main>
 
     <dialog id="detailDialog" class="dialog">
-        <button id="closeDialogBtn" class="close-btn">✕</button>
-        <div id="detailContent"></div>
+      <button id="closeDialogBtn" class="close-btn">✕</button>
+      <div id="detailContent"></div>
 
-        <div class="dialog-nav">
-            <button id="prevDialogBtn">⬅</button>
-            <button id="nextDialogBtn">➡</button>
-        </div>
+      <div class="dialog-nav">
+        <button id="prevDialogBtn">⬅</button>
+        <button id="nextDialogBtn">➡</button>
+      </div>
     </dialog>
 
     <footer class="footer">
-        <div class="container footer-content">
-            <p>© Kevin Schumacher</p>
-            <a href="imprint_current.html">Imprint</a>
-        </div>
+      <div class="container footer-content">
+        <p>© Kevin Schumacher</p>
+        <a href="imprint_current.html">Imprint</a>
+      </div>
     </footer>
-</body>
-
+  </body>
 </html>

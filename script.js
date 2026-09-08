@@ -7,6 +7,7 @@ import {
   toggleLoading,
   clearGrid,
   showSearchError,
+  clearSearchError,
   toggleLoadMoreButton,
   renderPokemonList,
   openPokemonDetailDialog,
@@ -117,6 +118,8 @@ async function handleSearch() {
     return;
   }
 
+  clearSearchError();
+
   // Paginierung deaktivieren während der Suche
   nextPageUrl = null;
   toggleLoadMoreButton(false);
@@ -139,6 +142,7 @@ async function handleSearch() {
 // ============================================================
 async function handleBack() {
   searchInputRef.value = "";
+  clearSearchError();
   toggleBackButton(false);
   currentlyDisplayedPokemons = [];
   clearGrid();

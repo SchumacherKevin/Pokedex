@@ -2,39 +2,51 @@
    BASE – Reset & globale Grundeinstellungen
    ============================================================ */
 body {
-    display: flex;
-    flex-direction: column;    /* Header, Main, Footer vertikal stapeln */
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    background: #1b1b1b;
-    color: white;
-    min-height: 100dvh;        /* Volle Viewport-Höhe; Footer bleibt unten */
+  display: flex;
+  flex-direction: column; /* Header, Main, Footer vertikal stapeln */
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: #1b1b1b;
+  color: white;
+  min-height: 100dvh; /* Volle Viewport-Höhe; Footer bleibt unten */
 }
 
 /* Utility-Klasse zum schnellen Verstecken von Elementen per JS */
 .hidden {
-    display: none;
+  display: none;
 }
 
 /* ============================================================
    TYPOGRAPHY – Überschriften-Hierarchie
    ============================================================ */
-h1 { font-size: 2rem; }
-h2 { font-size: 1.75rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
-h5 { font-size: 1rem; }
-h6 { font-size: 0.875rem; }
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.75rem;
+}
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1.25rem;
+}
+h5 {
+  font-size: 1rem;
+}
+h6 {
+  font-size: 0.875rem;
+}
 
 a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 a:hover {
-    color: #8e0000;   /* Dunkelrot als Hover-Signal */
+  color: #8e0000; /* Dunkelrot als Hover-Signal */
 }
 
 /* ============================================================
@@ -43,18 +55,18 @@ a:hover {
 
 /* Zentriert den Inhalt und begrenzt die maximale Breite auf 1440 px */
 .container {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
 /* Main wächst flexibel, um den Platz zwischen Header und Footer zu füllen */
 main {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 16px;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px;
+  gap: 16px;
 }
 
 /* ============================================================
@@ -62,101 +74,118 @@ main {
    ============================================================ */
 .header,
 .footer {
-    background: linear-gradient(180deg, #ef5350, #c62828);
-    border-bottom: 6px solid #8e0000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    color: white;
-    padding: 12px 16px;
-    text-align: center;
+  background: linear-gradient(180deg, #ef5350, #c62828);
+  border-bottom: 6px solid #8e0000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  color: white;
+  padding: 12px 16px;
+  text-align: center;
 }
 
 /* Footer: Rahmen oben statt unten */
 .footer {
-    border-top: 6px solid #8e0000;
-    border-bottom: none;
+  border-top: 6px solid #8e0000;
+  border-bottom: none;
 }
 
 /* Flex-Zeile: Logo links, Suche rechts */
 .header-content,
 .footer-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 header img {
-    height: 100px;
-    width: 100px;
+  height: 100px;
+  width: 100px;
 }
 
 .logo {
-    font-size: 2rem;
-    letter-spacing: 2px;
+  font-size: 2rem;
+  letter-spacing: 2px;
 }
 
 /* ============================================================
    SEARCH – Suchleiste mit Input und Buttons
    ============================================================ */
 .search-container {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.search-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-error {
+  min-height: 24px;
+  margin: 4px 0 0;
+  color: #ffb3b3;
+  font-size: 0.875rem;
+  visibility: hidden;
+}
+
+.search-error.visible {
+  visibility: visible;
 }
 
 #searchInput {
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    background: #2b2b2b;
-    color: white;
-    flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #2b2b2b;
+  color: white;
+  flex: 1;
 }
 
 #searchBtn {
-    background: #111;
-    border-radius: 8px;
-    padding: 12px 16px;
+  background: #111;
+  border-radius: 8px;
+  padding: 12px 16px;
 }
 
 #searchBtn:hover {
-    background: #333;
+  background: #333;
 }
 
 /* ============================================================
    BUTTONS – Globale Button-Stile und Varianten
    ============================================================ */
 button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    background: #ef5350;   /* Primärfarbe Rot */
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #ef5350; /* Primärfarbe Rot */
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
-    background: #c62828;
+  background: #c62828;
 }
 
 /* Zurück-Button: invertiertes Schema (Outline-Style) */
 #backBtn {
-    background: #2b2b2b;
-    color: #ef5350;
-    border: 2px solid #ef5350;
+  background: #2b2b2b;
+  color: #ef5350;
+  border: 2px solid #ef5350;
 }
 
 #backBtn:hover {
-    background: #ef5350;
-    color: white;
+  background: #ef5350;
+  color: white;
 }
 
 /* Zentrierter Bereich unterhalb des Grids für den Load-More-Button */
 .load-more-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 12px;
 }
 
 /* ============================================================
@@ -165,47 +194,47 @@ button:hover {
 
 /* Flexbox-Grid: Karten umbrechen und zentrieren sich automatisch */
 .card-flex {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
 }
 
 .card {
-    border-radius: 14px;
-    padding: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;   /* Transparenter Rahmen verhindert Layout-Shift beim Hover */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 200px;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent; /* Transparenter Rahmen verhindert Layout-Shift beim Hover */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
 }
 
 /* Hover: Karte leicht anheben und roten Rahmen einblenden */
 .card:hover {
-    transform: translateY(-6px) scale(1.03);
-    border-color: #ef5350;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transform: translateY(-6px) scale(1.03);
+  border-color: #ef5350;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .card img {
-    width: 100px;
+  width: 100px;
 }
 
 .card h3 {
-    margin: 10px 0 6px;
+  margin: 10px 0 6px;
 }
 
 /* Typ-Badge (Pill): Hintergrundfarbe kommt aus pokemontypes.css */
 .type-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 16px;
-    background: #ef5350;   /* Fallback, wird von Typ-Klassen überschrieben */
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 16px;
+  background: #ef5350; /* Fallback, wird von Typ-Klassen überschrieben */
 }
 
 /* ============================================================
@@ -214,125 +243,127 @@ button:hover {
 
 /* Überlagert die gesamte Seite mit einem halbtransparenten Hintergrund */
 .spinner {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(27, 27, 27, 0.92);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(27, 27, 27, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner.hidden {
-    display: none;
+  display: none;
 }
 
 /* Spinning-Ring via ::after-Pseudoelement */
 .spinner::after {
-    content: "";
-    width: 64px;
-    height: 64px;
-    border: 7px solid #444;
-    border-top: 7px solid #ef5350;   /* Roter Sektor dreht sich */
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
+  content: "";
+  width: 64px;
+  height: 64px;
+  border: 7px solid #444;
+  border-top: 7px solid #ef5350; /* Roter Sektor dreht sich */
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ============================================================
    DIALOG – Pokémon-Detailansicht als modaler Dialog
    ============================================================ */
 .dialog {
-    background: #111;
-    color: white;
-    border-radius: 20px;
-    border: 4px solid #ef5350;
-    padding: 20px;
-    width: 380px;
-    max-width: 90%;
-    box-sizing: border-box;
+  background: #111;
+  color: white;
+  border-radius: 20px;
+  border: 4px solid #ef5350;
+  padding: 20px;
+  width: 380px;
+  max-width: 90%;
+  box-sizing: border-box;
 }
 
 /* Offener Dialog: Flex-Spalte, damit der Inhalt scrollbar bleibt
    und die Nav-Buttons immer am unteren Rand sitzen */
 .dialog[open] {
-    width: 420px;
-    max-width: 92vw;
-    max-height: 92vh;
-    display: flex;
-    flex-direction: column;
+  width: 420px;
+  max-width: 92vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Dunkler Backdrop hinter dem Dialog */
 dialog::backdrop {
-    background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 /* Schließen-Button (✕): absolut positioniert in der oberen rechten Ecke */
 .close-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: transparent;
-    border: 2px solid #ef5350;
-    color: #ef5350;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    padding: 0;
-    font-size: 15px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.2s;
-    z-index: 10;
-    flex-shrink: 0;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: 2px solid #ef5350;
+  color: #ef5350;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .close-btn:hover {
-    background: #ef5350;
-    color: white;
+  background: #ef5350;
+  color: white;
 }
 
 /* Scrollbarer Inhaltsbereich des Dialogs */
 #detailContent {
-    flex: 1;
-    padding-right: 4px;
+  flex: 1;
+  padding-right: 4px;
 }
 
 /* Navigations-Buttons (Vor/Zurück) am unteren Rand des Dialogs */
 .dialog-nav {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 10px;
 }
 
 /* ============================================================
    POKEMON DETAIL – Artwork und Header im Dialog
    ============================================================ */
 .pokemon-detail-header {
-    align-items: center;
-    text-align: center;
+  align-items: center;
+  text-align: center;
 }
 
 .pokemon-detail-img {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    max-width: 100%;
-    height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
 }
 
 .dialog img {
-    width: 150px;
-    max-width: 80%;
+  width: 150px;
+  max-width: 80%;
 }
 
 /* ============================================================
@@ -341,113 +372,115 @@ dialog::backdrop {
 
 /* Begrenzung der Höhe, damit der Dialog nicht zu groß wird */
 .stats-container {
-    max-height: 250px;
-    padding-right: 8px;
+  max-height: 250px;
+  padding-right: 8px;
 }
 
 .stat-row {
-    display: flex;
-    gap: 4px;
+  display: flex;
+  gap: 4px;
 }
 
 /* Äußerer Balken (Schiene) */
 .stat-bar {
-    width: 60%;
-    height: 16px;
-    background: #333;
-    border-radius: 12px;
-    margin: 8px 0;
+  width: 60%;
+  height: 16px;
+  background: #333;
+  border-radius: 12px;
+  margin: 8px 0;
 }
 
 /* Farbiger Füllbalken – Breite wird per JS animiert (0% → Zielwert) */
 .stat-fill {
-    height: 100%;
-    border-radius: 12px;
-    background: #ef5350;
-    transition: width 0.6s ease;
+  height: 100%;
+  border-radius: 12px;
+  background: #ef5350;
+  transition: width 0.6s ease;
 }
 
 /* ============================================================
    EVOLUTION – Evolutionskette horizontal darstellen
    ============================================================ */
 .evolution-chain {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .evo-item {
-    width: 22%;
-    min-width: 40px;
-    text-align: center;
+  width: 22%;
+  min-width: 40px;
+  text-align: center;
 }
 
 .evo-item img {
-    width: 100%;
-    max-width: 100%;
+  width: 100%;
+  max-width: 100%;
 }
 
 .evo-arrow {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 /* ============================================================
    ACCORDION – Ausklappbare Sektionen im Detail-Dialog
    ============================================================ */
 .accordion {
-    margin-top: 10px;
-    border: 1px solid #333;
-    border-radius: 10px;
-    overflow: hidden;   /* Verhindert, dass Inhalt aus dem abgerundeten Rahmen ragt */
+  margin-top: 10px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  overflow: hidden; /* Verhindert, dass Inhalt aus dem abgerundeten Rahmen ragt */
 }
 
 /* Akkordeon-Kopfzeile */
 .accordion-btn {
-    width: 100%;
-    background: #1e1e1e;
-    color: white;
-    border: none;
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 0;
-    transition: background 0.2s;
+  width: 100%;
+  background: #1e1e1e;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 0;
+  transition: background 0.2s;
 }
 
 .accordion-btn:hover {
-    background: #2a2a2a;
+  background: #2a2a2a;
 }
 
 /* Pfeil-Icon dreht sich beim Öffnen um 180° */
 .accordion-arrow {
-    font-size: 12px;
-    transition: transform 0.3s ease;
-    display: inline-block;
+  font-size: 12px;
+  transition: transform 0.3s ease;
+  display: inline-block;
 }
 
 .accordion-btn.open .accordion-arrow {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 /* Akkordeon-Körper: max-height-Trick für CSS-Animation (height: auto ist nicht animierbar) */
 .accordion-body {
-    max-height: 0;
-    transition: max-height 0.35s ease, padding 0.2s ease;
-    padding: 0 16px;
-    background: #161616;
-    overflow: hidden;
+  max-height: 0;
+  transition:
+    max-height 0.35s ease,
+    padding 0.2s ease;
+  padding: 0 16px;
+  background: #161616;
+  overflow: hidden;
 }
 
 .accordion-body.open {
-    max-height: 400px;
-    padding: 12px 16px;
+  max-height: 400px;
+  padding: 12px 16px;
 }
 
 /* ============================================================
@@ -456,98 +489,132 @@ dialog::backdrop {
 
 /* Tablets & kleine Desktops */
 @media (max-width: 600px) {
-    /* Header vertikal stapeln */
-    .header-content {
-        flex-direction: column;
-        gap: 10px;
-    }
+  /* Header vertikal stapeln */
+  .header-content {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    }
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
 
-    h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.6rem; }
-    h3 { font-size: 1.4rem; }
+  h1 {
+    font-size: 1.8rem;
+  }
+  h2 {
+    font-size: 1.6rem;
+  }
+  h3 {
+    font-size: 1.4rem;
+  }
 }
 
 /* Smartphones */
 @media (max-width: 480px) {
-    .card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
 
-    #searchInput,
-    #searchBtn {
-        padding: 10px;
-    }
+  #searchInput,
+  #searchBtn {
+    padding: 10px;
+  }
 
-    h1 { font-size: 1.6rem; }
-    h2 { font-size: 1.4rem; }
-    h3 { font-size: 1.2rem; }
+  h1 {
+    font-size: 1.6rem;
+  }
+  h2 {
+    font-size: 1.4rem;
+  }
+  h3 {
+    font-size: 1.2rem;
+  }
 }
 
 /* Kleine Smartphones */
 @media (max-width: 360px) {
-    /* Grid auf einspaltige Listenansicht reduzieren */
-    .card-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
+  /* Grid auf einspaltige Listenansicht reduzieren */
+  .card-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-    .dialog {
-        width: 90%;
-        max-height: 90vh;
-        padding: 16px;
-    }
+  .dialog {
+    width: 90%;
+    max-height: 90vh;
+    padding: 16px;
+  }
 
-    .dialog img {
-        width: 100px;
-        max-width: 60%;
-    }
+  .dialog img {
+    width: 100px;
+    max-width: 60%;
+  }
 
-    /* Nav-Buttons untereinander */
-    .dialog-nav {
-        flex-direction: column;
-        gap: 8px;
-    }
+  /* Nav-Buttons untereinander */
+  .dialog-nav {
+    flex-direction: column;
+    gap: 8px;
+  }
 
-    .logo { font-size: 1.5rem; }
-    h1 { font-size: 1.4rem; }
-    h2 { font-size: 1.2rem; }
-    h3 { font-size: 1.1rem; }
+  .logo {
+    font-size: 1.5rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  h3 {
+    font-size: 1.1rem;
+  }
 }
 
 /* Sehr kleine Geräte (z. B. ältere Feature-Phones) */
 @media (max-width: 320px) {
-    .card-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+  .card-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .dialog {
-        width: 90%;
-        max-height: 90vh;
-        padding: 12px;
-    }
+  .dialog {
+    width: 90%;
+    max-height: 90vh;
+    padding: 12px;
+  }
 
-    .dialog img { width: 100px; }
-    .logo { font-size: 1.2rem; }
+  .dialog img {
+    width: 100px;
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
 
-    button {
-        padding: 6px 10px;
-        font-size: 12px;
-    }
+  button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 
-    /* Suchleiste untereinander stapeln */
-    .search-container { flex-direction: column; }
+  /* Suchleiste untereinander stapeln */
+  .search-container {
+    flex-direction: column;
+  }
 
-    #searchInput,
-    #searchBtn { width: 100%; }
+  #searchInput,
+  #searchBtn {
+    width: 100%;
+  }
 
-    h1 { font-size: 1.2rem; }
-    h2 { font-size: 1.1rem; }
-    h3 { font-size: 1rem; }
+  h1 {
+    font-size: 1.2rem;
+  }
+  h2 {
+    font-size: 1.1rem;
+  }
+  h3 {
+    font-size: 1rem;
+  }
 }

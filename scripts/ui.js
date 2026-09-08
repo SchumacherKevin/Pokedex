@@ -15,6 +15,7 @@ const pokemonGridContainer = document.getElementById("pokemonContainer");
 const loadingSpinnerElement = document.getElementById("spinner");
 const pokemonDetailDialog = document.getElementById("detailDialog");
 const pokemonDetailContent = document.getElementById("detailContent");
+const searchErrorElement = document.getElementById("searchError");
 
 // ============================================================
 // EXPORT: toggleLoading – Lade-Overlay ein- oder ausblenden
@@ -51,8 +52,17 @@ export function showNoResults() {
 // EXPORT: showSearchError – Validierungshinweis für kurze Suchbegriffe
 // ============================================================
 export function showSearchError() {
-  pokemonGridContainer.innerHTML =
-    '<p class="txtNoResult">Please enter at least 3 characters.</p>';
+  if (!searchErrorElement) return;
+
+  searchErrorElement.textContent = "Please enter at least 3 characters.";
+  searchErrorElement.classList.add("visible");
+}
+
+// ============================================================
+// EXPORT: clearSearchError – Validierungshinweis ausblenden
+// ============================================================
+export function clearSearchError() {
+  searchErrorElement?.classList.remove("visible");
 }
 
 // ============================================================
